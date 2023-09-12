@@ -53,7 +53,7 @@ const LoginAComponent = () => {
                                 placeholder="Enter your password"
                             />
                         </div>
-                        <Link href="/">
+                        <Link href="/isVerified">
                             <button
                                 className="bg-[#632282] hover:bg-[#8233A8] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
                                 type="submit"
