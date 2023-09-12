@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import logo from "../assets/logo_white.svg";
 import Image from "next/image";
+
 const LoginAComponent = () => {
+    const [otpVisible, setOtpVisible] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    // Function to toggle OTP visibility
+    const toggleOtpVisibility = () => {
+        setOtpVisible(!otpVisible);
+    };
+
+    // Function to disable the button and re-enable it after 1 minute
+    const disableSendButtonForOneMinute = () => {
+        setIsButtonDisabled(true);
+        setTimeout(() => {
+            setIsButtonDisabled(false);
+        }, 60000); // 1 minute = 60,000 milliseconds
+    };
+
+    useEffect(() => {
+        setIsButtonDisabled(true);
+
+        setTimeout(() => {
+            setIsButtonDisabled(false);
+        }, 15000);
+    }, []);
     return (
         <>
             <div className="h-screen max-h-[30vh] bg-gradient-to-b from-[#8233A8] to-[#000113]">
@@ -16,40 +40,54 @@ const LoginAComponent = () => {
             </div>
             <div className="h-[70vh] bg-[#000113]">
                 <div className="flex justify-center items-center h-full">
-                    <form className="bg-[#000113] rounded-lg p-8 max-w-sm w-full">
+                    <div className="bg-[#000113] rounded-lg p-8 max-w-sm w-full">
                         <h2 className="text-2xl font-bold text-white mb-6">
                             Sign In
                         </h2>
                         <div className="mb-4">
                             <label className="block text-white font-bold mb-2">
-                                E-mail
+                                Phone Number
                             </label>
                             <input
                                 className="appearance-none bg-transparent border-b-2 border-white w-full py-2 px-3 text-white leading-tight focus:outline-none focus:border-[#8233A8]"
-                                id="email"
+                                id="phone"
                                 type="text"
-                                placeholder="Enter your E-mail"
+                                placeholder="Enter your Phone Number"
                             />
                         </div>
-                        <div className="mb-6">
+                        <button
+                            className={`bg-[#632282] hover:bg-[#8233A8] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full mb-6`}
+                            onClick={() => {
+                                toggleOtpVisibility();
+                                disableSendButtonForOneMinute();
+                            }}
+                            disabled={isButtonDisabled}
+                        >
+                            Send OTP
+                        </button>
+                        <div
+                            className={`mb-6 ${
+                                otpVisible ? "block" : "hidden"
+                            }`}
+                        >
                             <label className="block text-white font-bold mb-2">
-                                Password
+                                OTP
                             </label>
                             <input
                                 className="appearance-none bg-transparent border-b-2 border-white w-full py-2 px-3 text-white leading-tight focus:outline-none focus:border-[#8233A8]"
-                                id="password"
-                                type="password"
-                                placeholder="Enter your password"
+                                id="OTP"
+                                type="text"
+                                placeholder="Enter OTP"
                             />
+                            <Link href="/chat">
+                                <button
+                                    className="bg-[#632282] hover:bg-[#8233A8] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full mt-4"
+                                    type="submit"
+                                >
+                                    Sign In
+                                </button>
+                            </Link>
                         </div>
-                        <Link href="/">
-                            <button
-                                className="bg-[#632282] hover:bg-[#8233A8] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                                type="submit"
-                            >
-                                Sign In
-                            </button>
-                        </Link>
 
                         <p className="text-white text-center mt-10">
                             {/* eslint-disable-next-line react/no-unescaped-entities */}
@@ -61,7 +99,7 @@ const LoginAComponent = () => {
                                 Sign up
                             </Link>
                         </p>
-                    </form>
+                    </div>
                 </div>
             </div>
         </>
