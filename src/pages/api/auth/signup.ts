@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import * as argon from "argon2";
 import { client } from "@/utils/database";
 import type { UserSchemaType } from "@/utils/types/users";
 
@@ -16,33 +15,30 @@ export default async function handler(
             return;
         }
 
-        const { name, email, password } = req.body;
+        const { name, phone } = req.body;
 
-        if (!email || !password) {
+        if (!name || !phone) {
             res.status(403).json({
                 success: false,
-                message: "Email and Password are requrired.",
+                message: "Name and Phone are requrired.",
             });
             return;
         }
 
         const collection = client.db().collection("users");
-        const user = await collection.findOne({ email });
+        const user = await collection.findOne({ phone });
 
         if (user) {
             res.status(403).json({
                 success: false,
-                message: "Email already exists.",
+                message: "Phone number already taken.",
             });
             return;
         }
 
-        const hash = await argon.hash(password);
-
         const newUser: UserSchemaType = {
             name,
-            email,
-            hash,
+            phone,
             isVerified: false,
             createdAt: new Date(),
             updatedAt: new Date(),
