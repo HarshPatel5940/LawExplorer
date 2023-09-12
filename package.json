@@ -15,6 +15,7 @@
     "argon2": "^0.31.1",
     "autoprefixer": "10.4.15",
     "aws-sdk": "^2.1450.0",
+    "axios": "^1.5.0",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
     "jsonwebtoken": "^9.0.2",

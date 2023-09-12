@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import logo from "../assets/logo_white.svg";
 import Image from "next/image";
+import { Typewriter } from "react-simple-typewriter";
+import { promptOpenAI } from "@/utils/rest";
 const Chat = () => {
+    const [response, setResponse] = useState("");
+    const [propmt, setPrompt] = useState({
+        data: "",
+    });
+    async function handleClick() {
+        try {
+            // const result = await promptOpenAI(propmt);
+            // const data = await result;
+            // setResponse(data);
+            console.log(propmt);
+        } catch (error) {}
+    }
+
+    async function handleChange(event: any) {
+        const { value, name } = event.target;
+        event.persist();
+        setResponse(() => {
+            return {
+                [name]: value,
+            };
+        });
+    }
     return (
         <>
             <div className="h-screen max-h-[30vh] bg-gradient-to-b from-[#8233A8] to-[#000113]">
@@ -22,6 +46,9 @@ const Chat = () => {
                                 <textarea
                                     className="appearance-none bg-[#200D38]  border-b-2 border-white w-[60vw] py-3 px-5  rounded-md text-white leading-tight focus:outline-none focus:border-[#8233A8]"
                                     placeholder="Enter your prompt here..."
+                                    onChange={handleChange}
+                                    name="prompt"
+                                    value={propmt.data}
                                 ></textarea>
                                 <button className="bg-[#8233A8]  focus:bg-[#6b288a] active:bg-[#4c1b63] text-white px-4 py-2 rounded-md ml-2 cursor-pointer">
                                     {">"}
@@ -30,18 +57,7 @@ const Chat = () => {
                         </form>
                     </div>
                     <div className="w-full h-auto flex items-center justify-center ">
-                        <div className="flex items-center justify-normal text-white pt-16 max-w-7xl px-10 sm:px-10">
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello hello hello hello hello hello
-                            hello hello hello
-                        </div>
+                        <div className="flex items-center justify-normal text-white pt-16 max-w-7xl px-10 sm:px-10"></div>
                     </div>
                 </div>
             </div>
