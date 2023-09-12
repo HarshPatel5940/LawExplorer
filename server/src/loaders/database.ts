@@ -1,22 +1,18 @@
-import { Db, MongoClient } from 'mongodb';
-import config from '../config';
+// import { Db, MongoClient } from 'mongodb';
+// import config from '../config';
 
-let db: Db;
+// let db: Db;
 
-async function initializeClient(): Promise<Db> {
-  const client = await MongoClient.connect(config.databaseURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    ignoreUndefined: true,
-  });
+// async function initializeClient(): Promise<Db> {
+//   // const client = await MongoClient.connect(config.databaseURL);
 
-  return client.db();
-}
+//   // return client.db();
+// }
 
-export default async (): Promise<Db> => {
-  if (!db) {
-    db = await initializeClient();
-  }
+// export default async (): Promise<Db> => {
+//   if (!db) {
+//     db = await initializeClient();
+//   }
 
-  return db;
-};
+//   return db;
+// };
