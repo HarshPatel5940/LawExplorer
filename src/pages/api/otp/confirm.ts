@@ -2,9 +2,10 @@ import { client } from "@/utils/database";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse,
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
+
     if (req.method == "POST") {
         try {
             const { phone } = req.query;
@@ -46,4 +47,5 @@ export default async function handler(
             res.status(400).json({ success: false, error });
         }
     }
+  }
 }

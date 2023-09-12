@@ -5,9 +5,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { customAlphabet } from "nanoid";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse,
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
+
     if (req.method === "POST") {
         try {
             const { phone } = req.body;
@@ -45,4 +46,5 @@ export default async function handler(
             res.status(400).json({ success: false, error });
         }
     }
+  }
 }

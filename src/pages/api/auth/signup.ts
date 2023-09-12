@@ -1,45 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import * as argon from "argon2";
 import { client } from "@/utils/database";
 import type { UserSchemaType } from "@/utils/types/users";
 import { createMessage } from "@/utils/message";
 import { customAlphabet } from "nanoid";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         if (req.method !== "POST") {
-            res.status(400).json({
-                success: false,
-                message: "Invalid Request Type",
-            });
+            res.status(400).json({ success: false, message: "Invalid Request Type" });
             return;
         }
 
-        const { name, phone } = req.body;
+        const { name, email, password } = req.body;
 
-        if (!name || !phone) {
-            res.status(403).json({
-                success: false,
-                message: "Name and Phone are requrired.",
-            });
+        if (!email || !password) {
+            res.status(403).json({ success: false, message: "Email and Password are requrired." });
             return;
         }
 
         const collection = client.db().collection("users");
-        const user = await collection.findOne({ phone });
+        const user = await collection.findOne({ email });
 
         if (user) {
-            res.status(403).json({
-                success: false,
-                message: "Phone number already taken.",
-            });
+            res.status(403).json({ success: false, message: "Email already exists." });
             return;
         }
+
         const newUser: UserSchemaType = {
             name,
-            phone,
+            email,
+            hash,
             isVerified: false,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -54,17 +45,11 @@ export default async function handler(
         );
 
         if (!result.acknowledged) {
-            res.status(500).json({
-                success: false,
-                message: "Something went wrong.",
-            });
+            res.status(500).json({ success: false, message: "Something went wrong." });
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            message: "User created successfully.",
-        });
+        res.status(200).json({ success: true, message: "User created successfully." });
     } catch (error) {
         res.status(400).json({ success: false, error });
     }
