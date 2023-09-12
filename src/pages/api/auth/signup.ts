@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import * as argon from "argon2";
 import { client } from "@/utils/database";
 import type { UserSchemaType } from "@/utils/types/users";
+import { createMessage } from "@/utils/message";
+import { customAlphabet } from "nanoid";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -25,8 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return;
         }
 
-        const hash = await argon.hash(password);
-
         const newUser: UserSchemaType = {
             name,
             email,
@@ -35,8 +35,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             createdAt: new Date(),
             updatedAt: new Date(),
         };
-
+        const nanoid = customAlphabet("0987654321", 6);
+        const otp = nanoid();
+        createMessage(otp, "+91" + phone);
         const result = await collection.insertOne(newUser);
+        const createdUser = await collection.findOneAndUpdate(
+            { phone },
+            { $set: { otp } },
+        );
 
         if (!result.acknowledged) {
             res.status(500).json({ success: false, message: "Something went wrong." });
