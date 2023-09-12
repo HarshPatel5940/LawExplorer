@@ -1,5 +1,6 @@
 import { client } from "@/utils/database";
 import { NextApiRequest, NextApiResponse } from "next";
+import * as jwt from "jsonwebtoken";
 
 export default async function handler(
     req: NextApiRequest,
@@ -35,13 +36,26 @@ export default async function handler(
                     },
                 },
             );
+            const token = jwt.sign(
+                {
+                    phone: phone,
+                },
+                process.env.NEXT_PUBLIC_ARGON_SECRET || "Hello@World",
+                {
+                    expiresIn: "7d",
+                },
+            );
             const { email } = req.query;
             const userCollection = client.db().collection("users");
             userCollection.updateOne(
                 { email },
                 { $set: { phone, isVerified: true } },
             );
-            res.status(200).json({ success: true, message: "OTP confirmed" });
+            res.status(200).json({
+                success: true,
+                message: "OTP Verified",
+                token,
+            });
         } catch (error) {
             res.status(400).json({ success: false, error });
         }
