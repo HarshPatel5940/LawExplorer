@@ -16,18 +16,18 @@ export default async function handler(
             return;
         }
 
-        const { email, password } = req.body;
+        const { phone, otp } = req.body;
 
-        if (!email || !password) {
+        if (!phone || !otp) {
             res.status(403).json({
                 success: false,
-                message: "Email and Password are requrired.",
+                message: "Phone and OTP are requrired.",
             });
             return;
         }
 
         const collection = client.db().collection("users");
-        const user = await collection.findOne({ email });
+        const user = await collection.findOne({ phone });
 
         if (!user) {
             res.status(403).json({ success: false, message: "User not found" });
@@ -42,23 +42,33 @@ export default async function handler(
             return;
         }
 
-        const isValid = await argon.verify(user.hash, password);
-
-        if (!isValid) {
+        if (user.otp !== otp) {
             res.status(403).json({
                 success: false,
-                message: "Invalid password",
+                message: "Invalid OTP",
             });
             return;
         }
 
         const token = jwt.sign(
             {
-                email: user.email,
+                phone: user.phone,
             },
             process.env.NEXT_PUBLIC_ARGON_SECRET || "Hello@World",
             {
                 expiresIn: "7d",
+            },
+        );
+
+        collection.updateOne(
+            {
+                phone,
+            },
+            {
+                $set: {
+                    otp: null,
+                    updatedAt: new Date(),
+                },
             },
         );
 

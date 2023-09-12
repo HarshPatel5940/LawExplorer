@@ -11,6 +11,11 @@ export default async function handler(
     if (req.method === "POST") {
         try {
             const { phone } = req.body;
+            if (!phone) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: "Phone number missing" });
+            }
             const nanoid = customAlphabet("0987654321", 6);
             const otp = nanoid();
             if (!phoneValidation({ phone })) {
@@ -19,8 +24,18 @@ export default async function handler(
                     .json({ success: false, error: "Invalid phone number" });
             }
             createMessage(otp, "+91" + phone);
-            const collection = client.db().collection("otp");
-            collection.insertOne({ phone, otp });
+            const collection = client.db().collection("users");
+            const user = collection.findOneAndUpdate(
+                {
+                    phone,
+                },
+                {
+                    $set: {
+                        otp,
+                        updatedAt: new Date(),
+                    },
+                },
+            );
             res.status(200).json({
                 success: true,
                 phone,

@@ -7,22 +7,34 @@ export default async function handler(
 ) {
     if (req.method == "POST") {
         try {
-            const { phone, otp } = req.body;
-            const collection = client.db().collection("otp");
+            const { phone } = req.query;
+            const { otp } = req.body;
+            const collection = client.db().collection("users");
             const validity: any = await collection.findOne({
                 phone,
             });
             if (!validity) {
-                return res
-                    .status(400)
-                    .json({ success: false, error: "Invalid Mobile Number" });
+                return res.status(400).json({
+                    success: false,
+                    error: "Signup using the correct method!",
+                });
             }
             if (otp != validity.otp) {
                 return res
                     .status(400)
                     .json({ success: false, error: "Invalid OTP" });
             }
-            collection.deleteOne({ phone });
+            collection.updateOne(
+                {
+                    otp,
+                },
+                {
+                    $set: {
+                        updatedAt: new Date(),
+                        otp: null,
+                    },
+                },
+            );
             const { email } = req.query;
             const userCollection = client.db().collection("users");
             userCollection.updateOne(
